@@ -4,10 +4,11 @@ import { GeistMono } from 'geist/font/mono';
 import './globals.css';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/components/theme-provider';
+import { SessionProvider } from 'next-auth/react';
 
 export const metadata: Metadata = {
-  title: 'Inventario Renovar',
-  description: 'Aplicación para el control del inventario rápido de Renovar'
+  title: 'Inventario SurtiHogar',
+  description: 'Aplicación para el control del inventario rápido de SurtiHogar'
 };
 
 export default function RootLayout({
@@ -18,15 +19,17 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={`${GeistSans.variable} ${GeistMono.variable}`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Toaster richColors />
-          {children}
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster richColors />
+            {children}
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
