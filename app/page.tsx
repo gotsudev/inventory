@@ -111,7 +111,7 @@ export default function Home() {
               type="text"
               value={sku}
               onChange={(e) => setSku(e.target.value)}
-              placeholder="Escanea el SKU"
+              placeholder="Escanea el SKU del producto"
               className="flex-1"
               autoFocus
               disabled={isLoading}
@@ -130,12 +130,12 @@ export default function Home() {
         </form>
 
         <div className="mt-10">
-          <h2 className="text-xl font-bold mb-4 text-center">Últimas Ventas</h2>
+          <h2 className="text-xl font-bold mb-4 text-center">Últimas ventas</h2>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Id</TableHead>
-                <TableHead>Nombre</TableHead>
+                <TableHead>Producto</TableHead>
                 <TableHead>Precio</TableHead>
                 <TableHead>Fecha</TableHead>
               </TableRow>
@@ -146,7 +146,7 @@ export default function Home() {
                   <TableCell>{venta.id}</TableCell>
                   <TableCell>{venta.nombre}</TableCell>
                   <TableCell>
-                    ${' '}
+                    $
                     {venta.precio.toLocaleString('es-CO', {
                       minimumFractionDigits: 0,
                       maximumFractionDigits: 0
