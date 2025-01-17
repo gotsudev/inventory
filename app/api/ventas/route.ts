@@ -9,8 +9,17 @@ export async function GET() {
       },
       take: 10
     });
-    return NextResponse.json(ventas);
-  } catch (error) {
+
+    // Formatear la fecha en el servidor
+    const ventasFormateadas = ventas.map((venta) => ({
+      ...venta,
+      fecha: new Date(venta.fecha).toLocaleString('es-CO', {
+        timeZone: 'America/Bogota'
+      })
+    }));
+
+    return NextResponse.json(ventasFormateadas);
+  } catch {
     return NextResponse.json(
       { message: 'Error interno del servidor' },
       { status: 500 }
@@ -31,8 +40,16 @@ export async function POST(request: Request) {
       }
     });
 
-    return NextResponse.json(venta, { status: 201 });
-  } catch (error) {
+    // Formatear la fecha en el servidor
+    const ventaFormateada = {
+      ...venta,
+      fecha: new Date(venta.fecha).toLocaleString('es-CO', {
+        timeZone: 'America/Bogota'
+      })
+    };
+
+    return NextResponse.json(ventaFormateada, { status: 201 });
+  } catch {
     return NextResponse.json(
       { message: 'Error interno del servidor' },
       { status: 500 }
