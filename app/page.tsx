@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,7 @@ import {
 import ThemeToggle from '@/components/theme-toggle';
 
 export default function Home() {
+  const { status } = useSession(); // Elimina 'session' si no la necesitas
   const [sku, setSku] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -38,15 +40,18 @@ export default function Home() {
       }
       const nuevasVentas = await ventasResponse.json();
       setVentas(nuevasVentas);
-    } catch (error) {
-      console.error('Error al cargar ventas:', error);
+    } catch {
       toast.error('Error al cargar las ventas');
     }
   };
 
   useEffect(() => {
-    cargarVentas();
-  }, []);
+    if (status === 'authenticated') {
+      cargarVentas();
+    } else if (status === 'unauthenticated') {
+      signIn();
+    }
+  }, [status]);
 
   const handleSkuSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -93,8 +98,7 @@ export default function Home() {
 
       // Cargar las ventas actualizadas
       await cargarVentas();
-    } catch (error) {
-      console.error('Error:', error);
+    } catch {
       toast.error('Error al procesar la solicitud');
     }
 
@@ -102,8 +106,29 @@ export default function Home() {
     setSku('');
   };
 
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (status === 'unauthenticated') {
+    return null;
+  }
+
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-2">
+      <div className="flex justify-end gap-2 pb-2">
+        <ThemeToggle />
+        <Button
+          variant="destructive"
+          onClick={() => signOut({ callbackUrl: '/auth/login' })}
+        >
+          Cerrar sesión
+        </Button>
+      </div>
       <Card className="p-6 mb-2">
         <form onSubmit={handleSkuSubmit} className="space-y-4">
           <div className="flex gap-4">
@@ -120,10 +145,10 @@ export default function Home() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Buscando
+                  Agregando
                 </>
               ) : (
-                'Buscar'
+                'Agregar'
               )}
             </Button>
           </div>
@@ -160,9 +185,6 @@ export default function Home() {
           </Table>
         </div>
       </Card>
-      <div className="flex justify-end">
-        <ThemeToggle />
-      </div>
     </div>
   );
 }
