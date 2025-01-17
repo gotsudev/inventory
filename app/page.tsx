@@ -153,9 +153,7 @@ export default function Home() {
                     })}
                   </TableCell>
 
-                  <TableCell>
-                    {new Date(venta.fecha).toLocaleString()}
-                  </TableCell>
+                  <TableCell>{venta.fecha}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
