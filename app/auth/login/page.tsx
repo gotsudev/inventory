@@ -70,6 +70,7 @@ export default function SignIn() {
                   className="w-full"
                   autoFocus
                   disabled={isLoading}
+                  required
                 />
               </div>
               <div>
@@ -80,6 +81,7 @@ export default function SignIn() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full"
                   disabled={isLoading}
+                  required
                 />
               </div>
               <Button type="submit" disabled={isLoading} className="w-full">
