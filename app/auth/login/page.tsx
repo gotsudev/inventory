@@ -25,6 +25,14 @@ export default function SignIn() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
+    // Verificar que no haya campos vacíos
+    if (!email || !password) {
+      toast.error('Por favor llena todos los campos');
+      setIsLoading(false);
+      return;
+    }
+
     const result = await signIn('credentials', {
       email,
       password,
@@ -70,7 +78,6 @@ export default function SignIn() {
                   className="w-full"
                   autoFocus
                   disabled={isLoading}
-                  required
                 />
               </div>
               <div>
@@ -81,7 +88,6 @@ export default function SignIn() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full"
                   disabled={isLoading}
-                  required
                 />
               </div>
               <Button type="submit" disabled={isLoading} className="w-full">
