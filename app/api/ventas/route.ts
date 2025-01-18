@@ -56,3 +56,23 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    await prisma.venta.delete({
+      where: {
+        id: Number(id)
+      }
+    });
+
+    return NextResponse.json({ message: 'Venta eliminada' });
+  } catch {
+    return NextResponse.json(
+      { message: 'Error interno del servidor' },
+      { status: 500 }
+    );
+  }
+}
