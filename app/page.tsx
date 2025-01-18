@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Trash2 } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -15,7 +15,15 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
+
 import ThemeToggle from '@/components/theme-toggle';
+import AlertDialogComponent from '@/components/alert-dialog';
 
 export default function Home() {
   const { status } = useSession(); // Elimina 'session' si no la necesitas
@@ -106,6 +114,31 @@ export default function Home() {
     setSku('');
   };
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [ventaIdToDelete, setVentaIdToDelete] = useState<number | null>(null);
+  const handleDeleteClick = (id: number) => {
+    setVentaIdToDelete(id);
+    setIsDialogOpen(true);
+  };
+  const handleConfirmDelete = async () => {
+    if (ventaIdToDelete !== null) {
+      try {
+        const response = await fetch(`/api/ventas?id=${ventaIdToDelete}`, {
+          method: 'DELETE'
+        });
+        if (!response.ok) {
+          toast.error('Error al eliminar la venta');
+          return;
+        }
+        toast.success('Venta eliminada exitosamente');
+        await cargarVentas();
+      } catch {
+        toast.error('Error al eliminar la venta');
+      }
+    }
+    setIsDialogOpen(false);
+  };
+
   if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -179,9 +212,29 @@ export default function Home() {
                   </TableCell>
 
                   <TableCell>{venta.fecha}</TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Trash2
+                            className="h-5 w-5 cursor-pointer hover:text-red-500 transition-colors"
+                            onClick={() => handleDeleteClick(venta.id)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Eliminar</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
+            <AlertDialogComponent
+              isOpen={isDialogOpen}
+              setIsOpen={setIsDialogOpen}
+              onConfirm={handleConfirmDelete}
+            />
           </Table>
         </div>
       </Card>
